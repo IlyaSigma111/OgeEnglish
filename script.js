@@ -1,8 +1,60 @@
+// Firebase инициализация
+let auth, db;
+
+// Инициализация Firebase при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
-    // Установка текущего года в футере
+    // Установка текущего года
     document.getElementById('currentYear').textContent = new Date().getFullYear();
     
+    // Инициализация Firebase
+    initializeFirebase();
+    
+    // Инициализация приложения
+    initializeApp();
+});
+
+function initializeFirebase() {
+    try {
+        // Используем конфиг из вашего Firebase проекта
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWP2jTkKMUlBhp693hmq0JLj-UxzYspCM",
+            authDomain: "englishproject-4c6d0.firebaseapp.com",
+            projectId: "englishproject-4c6d0",
+            storageBucket: "englishproject-4c6d0.firebasestorage.app",
+            messagingSenderId: "524432394751",
+            appId: "1:524432394751:web:a60536a71a3a1ca26d7fca"
+        };
+        
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        
+        console.log("Firebase инициализирован успешно");
+    } catch (error) {
+        console.error("Ошибка инициализации Firebase:", error);
+    }
+}
+
+function initializeApp() {
     // Навигация по вкладкам
+    setupNavigation();
+    
+    // Настройка аутентификации
+    setupAuthentication();
+    
+    // Настройка модальных окон
+    setupModals();
+    
+    // Настройка тестов
+    setupQuizzes();
+    
+    // Проверка состояния аутентификации
+    checkAuthState();
+}
+
+// Навигация
+function setupNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
     const tabContents = document.querySelectorAll('.tab-content');
     
@@ -10,558 +62,774 @@ document.addEventListener('DOMContentLoaded', function() {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Удаляем активный класс у всех ссылок
-            navLinks.forEach(item => item.classList.remove('active'));
-            
-            // Добавляем активный класс к текущей ссылке
-            this.classList.add('active');
-            
-            // Получаем целевую вкладку
             const targetTab = this.getAttribute('data-tab');
             
-            // Скрываем все вкладки
-            tabContents.forEach(tab => tab.classList.remove('active'));
+            // Обновляем активную ссылку
+            navLinks.forEach(item => item.classList.remove('active'));
+            this.classList.add('active');
             
-            // Показываем целевую вкладку
+            // Показываем нужную вкладку
+            tabContents.forEach(tab => tab.classList.remove('active'));
             document.getElementById(targetTab).classList.add('active');
             
-            // Закрываем меню на мобильных устройствах
+            // Закрываем мобильное меню
             if (window.innerWidth <= 768) {
-                navMenu.classList.remove('active');
+                document.querySelector('.nav-right').classList.remove('active');
             }
         });
     });
     
     // Мобильное меню
     const navToggle = document.getElementById('navToggle');
-    const navMenu = document.getElementById('navMenu');
-    
     if (navToggle) {
         navToggle.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
+            const navRight = document.querySelector('.nav-right');
+            navRight.classList.toggle('active');
+        });
+    }
+}
+
+// Аутентификация
+function setupAuthentication() {
+    // Кнопки открытия модальных окон
+    document.getElementById('loginBtn')?.addEventListener('click', () => openModal('loginModal'));
+    document.getElementById('signupBtn')?.addEventListener('click', () => openModal('signupModal'));
+    
+    // Переключение между формами
+    document.getElementById('switchToSignup')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModal('loginModal');
+        openModal('signupModal');
+    });
+    
+    document.getElementById('switchToLogin')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModal('signupModal');
+        openModal('loginModal');
+    });
+    
+    // Восстановление пароля
+    document.getElementById('forgotPasswordLink')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModal('loginModal');
+        openModal('forgotPasswordModal');
+    });
+    
+    document.getElementById('backToLogin')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeModal('forgotPasswordModal');
+        openModal('loginModal');
+    });
+    
+    // Форма входа
+    document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
+    
+    // Форма регистрации
+    document.getElementById('signupForm')?.addEventListener('submit', handleSignup);
+    
+    // Форма восстановления пароля
+    document.getElementById('forgotPasswordForm')?.addEventListener('submit', handlePasswordReset);
+    
+    // Вход через Google
+    document.getElementById('googleLogin')?.addEventListener('click', signInWithGoogle);
+    document.getElementById('googleSignup')?.addEventListener('click', signInWithGoogle);
+    
+    // Выход
+    document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+    
+    // Показать/скрыть пароль
+    setupPasswordToggles();
+    
+    // Проверка сложности пароля
+    const signupPassword = document.getElementById('signupPassword');
+    if (signupPassword) {
+        signupPassword.addEventListener('input', checkPasswordStrength);
+    }
+}
+
+// Модальные окна
+function setupModals() {
+    // Закрытие по кнопке
+    document.querySelectorAll('.close-modal').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                closeModal(modal.id);
+            }
+        });
+    });
+    
+    // Закрытие по клику вне окна
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal(this.id);
+            }
+        });
+    });
+    
+    // Закрытие по ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal').forEach(modal => {
+                if (modal.style.display === 'block') {
+                    closeModal(modal.id);
+                }
+            });
+        }
+    });
+}
+
+// Открыть модальное окно
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// Закрыть модальное окно
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        
+        // Очистка форм
+        const form = modal.querySelector('form');
+        if (form) {
+            form.reset();
+            
+            // Сброс сложности пароля
+            const strengthFill = document.getElementById('passwordStrengthFill');
+            const strengthText = document.getElementById('passwordStrengthText');
+            if (strengthFill && strengthText) {
+                strengthFill.style.width = '0%';
+                strengthText.textContent = 'Сложность пароля: слабый';
+            }
+        }
+    }
+}
+
+// Вход
+async function handleLogin(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
+    
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const spinner = submitBtn.querySelector('.loading-spinner');
+    
+    // Показать индикатор загрузки
+    btnText.style.display = 'none';
+    spinner.style.display = 'block';
+    submitBtn.disabled = true;
+    
+    try {
+        // Установка persistence
+        const persistence = rememberMe ? 
+            firebase.auth.Auth.Persistence.LOCAL : 
+            firebase.auth.Auth.Persistence.SESSION;
+        
+        await auth.setPersistence(persistence);
+        
+        // Вход пользователя
+        await auth.signInWithEmailAndPassword(email, password);
+        
+        // Закрыть модальное окно
+        closeModal('loginModal');
+        
+        showNotification('Вход выполнен успешно!', 'success');
+        
+    } catch (error) {
+        console.error('Ошибка входа:', error);
+        showNotification(getAuthErrorMessage(error), 'error');
+    } finally {
+        // Скрыть индикатор загрузки
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+}
+
+// Регистрация
+async function handleSignup(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+    
+    // Проверка паролей
+    if (password !== confirmPassword) {
+        showNotification('Пароли не совпадают', 'error');
+        return;
+    }
+    
+    // Проверка сложности пароля
+    if (!checkPasswordRequirements(password)) {
+        showNotification('Пароль слишком слабый. Используйте минимум 6 символов, включая буквы и цифры', 'error');
+        return;
+    }
+    
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const spinner = submitBtn.querySelector('.loading-spinner');
+    
+    // Показать индикатор загрузки
+    btnText.style.display = 'none';
+    spinner.style.display = 'block';
+    submitBtn.disabled = true;
+    
+    try {
+        // Создание пользователя
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Создание профиля в Firestore
+        await db.collection('users').doc(user.uid).set({
+            name: name,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            level: 'beginner',
+            goal: 'general',
+            settings: {
+                notifications: true,
+                dailyReminder: true
+            },
+            stats: {
+                completedTests: 0,
+                correctAnswers: 0,
+                totalAnswers: 0,
+                studyDays: 1,
+                currentStreak: 1,
+                lastActive: new Date().toISOString()
+            }
+        });
+        
+        // Закрыть модальное окно
+        closeModal('signupModal');
+        
+        showNotification('Регистрация успешна! Добро пожаловать!', 'success');
+        
+    } catch (error) {
+        console.error('Ошибка регистрации:', error);
+        showNotification(getAuthErrorMessage(error), 'error');
+    } finally {
+        // Скрыть индикатор загрузки
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+}
+
+// Вход через Google
+async function signInWithGoogle() {
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('profile');
+        provider.addScope('email');
+        
+        const result = await auth.signInWithPopup(provider);
+        const user = result.user;
+        
+        // Проверить, существует ли пользователь в Firestore
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        
+        if (!userDoc.exists) {
+            // Создать новый профиль
+            await db.collection('users').doc(user.uid).set({
+                name: user.displayName || user.email.split('@')[0],
+                email: user.email,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                level: 'beginner',
+                goal: 'general',
+                settings: {
+                    notifications: true,
+                    dailyReminder: true
+                },
+                stats: {
+                    completedTests: 0,
+                    correctAnswers: 0,
+                    totalAnswers: 0,
+                    studyDays: 1,
+                    currentStreak: 1,
+                    lastActive: new Date().toISOString()
+                }
+            });
+        }
+        
+        closeModal('loginModal');
+        closeModal('signupModal');
+        
+        showNotification('Вход через Google выполнен успешно!', 'success');
+        
+    } catch (error) {
+        console.error('Ошибка входа через Google:', error);
+        showNotification(getAuthErrorMessage(error), 'error');
+    }
+}
+
+// Восстановление пароля
+async function handlePasswordReset(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('resetEmail').value;
+    
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const spinner = submitBtn.querySelector('.loading-spinner');
+    
+    // Показать индикатор загрузки
+    btnText.style.display = 'none';
+    spinner.style.display = 'block';
+    submitBtn.disabled = true;
+    
+    try {
+        await auth.sendPasswordResetEmail(email);
+        
+        showNotification('Ссылка для сброса пароля отправлена на ваш email', 'success');
+        closeModal('forgotPasswordModal');
+        
+    } catch (error) {
+        console.error('Ошибка восстановления пароля:', error);
+        showNotification(getAuthErrorMessage(error), 'error');
+    } finally {
+        // Скрыть индикатор загрузки
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+}
+
+// Выход
+async function handleLogout() {
+    try {
+        await auth.signOut();
+        showNotification('Вы успешно вышли из системы', 'success');
+    } catch (error) {
+        console.error('Ошибка выхода:', error);
+        showNotification('Ошибка при выходе из системы', 'error');
+    }
+}
+
+// Проверка состояния аутентификации
+function checkAuthState() {
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            // Пользователь авторизован
+            updateUIForLoggedInUser(user);
+            
+            // Загрузить данные пользователя
+            await loadUserData(user.uid);
+            
+        } else {
+            // Пользователь не авторизован
+            updateUIForLoggedOutUser();
+        }
+    });
+}
+
+// Обновление UI для авторизованного пользователя
+function updateUIForLoggedInUser(user) {
+    // Скрыть кнопки авторизации
+    document.getElementById('authButtons').style.display = 'none';
+    
+    // Показать профиль
+    const userProfile = document.getElementById('userProfile');
+    userProfile.style.display = 'flex';
+    
+    // Обновить имя пользователя
+    const userName = document.getElementById('userName');
+    userName.textContent = user.displayName || user.email.split('@')[0];
+    
+    // Показать статистику пользователя
+    document.getElementById('userStats').style.display = 'block';
+    document.getElementById('generalStats').style.display = 'none';
+    
+    // Обновить аватар
+    const userAvatar = document.getElementById('userAvatar');
+    if (user.photoURL) {
+        userAvatar.innerHTML = `<img src="${user.photoURL}" alt="Аватар">`;
+    }
+}
+
+// Обновление UI для неавторизованного пользователя
+function updateUIForLoggedOutUser() {
+    // Показать кнопки авторизации
+    document.getElementById('authButtons').style.display = 'flex';
+    
+    // Скрыть профиль
+    document.getElementById('userProfile').style.display = 'none';
+    
+    // Показать общую статистику
+    document.getElementById('userStats').style.display = 'none';
+    document.getElementById('generalStats').style.display = 'block';
+    
+    // Скрыть вкладку профиля
+    const profileTab = document.getElementById('profile');
+    profileTab.classList.remove('active');
+    
+    // Если активна вкладка профиля, переключить на главную
+    if (profileTab.classList.contains('active')) {
+        document.querySelector('.nav-link[data-tab="home"]').click();
+    }
+}
+
+// Загрузка данных пользователя
+async function loadUserData(userId) {
+    try {
+        const userDoc = await db.collection('users').doc(userId).get();
+        
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            
+            // Обновить статистику
+            updateUserStats(userData.stats);
+            
+            // Обновить профиль
+            updateUserProfile(userData);
+            
+            // Обновить последнюю активность
+            await updateLastActive(userId);
+        }
+    } catch (error) {
+        console.error('Ошибка загрузки данных пользователя:', error);
+    }
+}
+
+// Обновление статистики
+function updateUserStats(stats) {
+    const completedTests = document.getElementById('completedTests');
+    const correctAnswers = document.getElementById('correctAnswers');
+    const studyDays = document.getElementById('studyDays');
+    const streak = document.getElementById('streak');
+    
+    if (completedTests) completedTests.textContent = stats.completedTests || 0;
+    if (correctAnswers) {
+        const percentage = stats.totalAnswers > 0 ? 
+            Math.round((stats.correctAnswers / stats.totalAnswers) * 100) : 0;
+        correctAnswers.textContent = `${percentage}%`;
+    }
+    if (studyDays) studyDays.textContent = stats.studyDays || 1;
+    if (streak) streak.textContent = stats.currentStreak || 1;
+}
+
+// Обновление профиля
+function updateUserProfile(userData) {
+    const profileUserName = document.getElementById('profileUserName');
+    const profileUserEmail = document.getElementById('profileUserEmail');
+    const profileName = document.getElementById('profileName');
+    const profileEmail = document.getElementById('profileEmail');
+    const profileLevel = document.getElementById('profileLevel');
+    const profileGoal = document.getElementById('profileGoal');
+    
+    if (profileUserName) profileUserName.textContent = userData.name || 'Пользователь';
+    if (profileUserEmail) profileUserEmail.textContent = userData.email || '';
+    if (profileName) profileName.value = userData.name || '';
+    if (profileEmail) profileEmail.value = userData.email || '';
+    if (profileLevel) profileLevel.value = userData.level || 'beginner';
+    if (profileGoal) profileGoal.value = userData.goal || 'general';
+}
+
+// Обновление последней активности
+async function updateLastActive(userId) {
+    try {
+        const now = new Date();
+        const userDoc = await db.collection('users').doc(userId).get();
+        const userData = userDoc.data();
+        
+        if (userData && userData.stats) {
+            const lastActive = new Date(userData.stats.lastActive || now);
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const lastActiveDay = new Date(lastActive.getFullYear(), lastActive.getMonth(), lastActive.getDate());
+            
+            const dayDiff = Math.floor((today - lastActiveDay) / (1000 * 60 * 60 * 24));
+            
+            let updates = {
+                'stats.lastActive': now.toISOString()
+            };
+            
+            // Обновить streak
+            if (dayDiff === 1) {
+                // Пользователь активен подряд
+                updates['stats.currentStreak'] = (userData.stats.currentStreak || 1) + 1;
+            } else if (dayDiff > 1) {
+                // Сбросить streak
+                updates['stats.currentStreak'] = 1;
+            }
+            
+            // Обновить studyDays
+            if (dayDiff > 0) {
+                updates['stats.studyDays'] = (userData.stats.studyDays || 1) + 1;
+            }
+            
+            await db.collection('users').doc(userId).update(updates);
+        }
+    } catch (error) {
+        console.error('Ошибка обновления активности:', error);
+    }
+}
+
+// Вспомогательные функции
+function checkPasswordStrength() {
+    const password = document.getElementById('signupPassword').value;
+    const strengthFill = document.getElementById('passwordStrengthFill');
+    const strengthText = document.getElementById('passwordStrengthText');
+    
+    if (!strengthFill || !strengthText) return;
+    
+    let strength = 0;
+    let text = 'слабый';
+    let color = '#f72585'; // красный
+    
+    if (password.length >= 6) strength += 25;
+    if (/[A-Z]/.test(password)) strength += 25;
+    if (/[0-9]/.test(password)) strength += 25;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+    
+    if (strength >= 75) {
+        text = 'сильный';
+        color = '#4cc9f0'; // синий
+    } else if (strength >= 50) {
+        text = 'средний';
+        color = '#ffd166'; // желтый
+    }
+    
+    strengthFill.style.width = `${strength}%`;
+    strengthFill.style.backgroundColor = color;
+    strengthText.textContent = `Сложность пароля: ${text}`;
+    strengthText.style.color = color;
+}
+
+function checkPasswordRequirements(password) {
+    return password.length >= 6 && /[A-Za-z]/.test(password) && /[0-9]/.test(password);
+}
+
+function setupPasswordToggles() {
+    // Для формы входа
+    const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+    if (toggleLoginPassword) {
+        toggleLoginPassword.addEventListener('click', function() {
+            const passwordInput = document.getElementById('loginPassword');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         });
     }
     
-    // Данные для викторин
-    const quizData = {
-        verbs: {
-            title: "Викторина по неправильным глаголам",
-            questions: [
-                {
-                    question: "Какая форма Past Simple у глагола 'begin'?",
-                    options: ["begin", "began", "begun", "beginned"],
-                    correct: 1
-                },
-                {
-                    question: "Какой глагол имеет одинаковые формы Past Simple и Past Participle?",
-                    options: ["break", "bring", "begin", "drink"],
-                    correct: 1
-                },
-                {
-                    question: "Какая форма Past Participle у глагола 'choose'?",
-                    options: ["choose", "chose", "chosen", "choosed"],
-                    correct: 2
-                },
-                {
-                    question: "Какая форма Past Simple у глагола 'drink'?",
-                    options: ["drink", "drank", "drunk", "drinked"],
-                    correct: 1
-                },
-                {
-                    question: "Как переводится глагол 'build'?",
-                    options: ["строить", "покупать", "ломать", "приносить"],
-                    correct: 0
-                },
-                {
-                    question: "Какая форма Past Participle у глагола 'do'?",
-                    options: ["do", "did", "done", "doed"],
-                    correct: 2
-                },
-                {
-                    question: "Какая форма Past Simple у глагола 'come'?",
-                    options: ["come", "came", "comed", "coming"],
-                    correct: 1
-                },
-                {
-                    question: "Как переводится глагол 'break'?",
-                    options: ["ломать", "строить", "выбирать", "приходить"],
-                    correct: 0
-                },
-                {
-                    question: "Какая форма Past Participle у глагола 'buy'?",
-                    options: ["buy", "bought", "buyed", "buying"],
-                    correct: 1
-                },
-                {
-                    question: "Какие три формы у глагола 'be'?",
-                    options: ["be - was - been", "be - were - been", "be - was/were - been", "be - been - was"],
-                    correct: 2
-                },
-                {
-                    question: "Какой глагол имеет форму Past Simple 'broke'?",
-                    options: ["bring", "break", "build", "buy"],
-                    correct: 1
-                },
-                {
-                    question: "Какая форма Past Simple у глагола 'bring'?",
-                    options: ["bring", "brang", "brought", "bringed"],
-                    correct: 2
-                }
-            ]
-        },
-        grammar: {
-            title: "Викторина по грамматике",
-            questions: [
-                {
-                    question: "Какое время используется для выражения регулярных действий?",
-                    options: ["Past Simple", "Present Simple", "Future Simple", "Present Continuous"],
-                    correct: 1
-                },
-                {
-                    question: "Какой модальный глагол выражает необходимость?",
-                    options: ["can", "should", "must", "may"],
-                    correct: 2
-                },
-                {
-                    question: "Какое время используется для выражений действий, которые произошли в определенное время в прошлом?",
-                    options: ["Past Simple", "Present Perfect", "Future Simple", "Present Continuous"],
-                    correct: 0
-                },
-                {
-                    question: "Какой модальный глагол используется для выражения способности?",
-                    options: ["must", "should", "can", "may"],
-                    correct: 2
-                },
-                {
-                    question: "Какое время используется для спонтанных решений о будущем?",
-                    options: ["Present Simple", "Past Simple", "Future Simple", "Present Perfect"],
-                    correct: 2
-                },
-                {
-                    question: "Какой модальный глагол выражает совет?",
-                    options: ["must", "should", "can", "may"],
-                    correct: 1
-                },
-                {
-                    question: "Как образуется вопросительная форма в Present Simple?",
-                    options: ["do/does + subject + verb", "subject + do/does + verb", "verb + subject + do/does", "does/do + verb + subject"],
-                    correct: 0
-                },
-                {
-                    question: "Какое время используется для действий, происходящих в момент речи?",
-                    options: ["Present Simple", "Past Simple", "Present Continuous", "Future Simple"],
-                    correct: 2
-                },
-                {
-                    question: "Какой модальный глагол выражает разрешение?",
-                    options: ["must", "should", "can", "will"],
-                    correct: 2
-                },
-                {
-                    question: "Как образуется отрицательная форма в Past Simple для правильных глаголов?",
-                    options: ["subject + didn't + verb", "subject + didn't + verb (past)", "subject + don't + verb", "subject + not + verb (past)"],
-                    correct: 0
-                },
-                {
-                    question: "Какое время используется для выражения планов на будущее?",
-                    options: ["Future Simple", "Present Continuous", "Present Simple", "Past Simple"],
-                    correct: 1
-                },
-                {
-                    question: "Какой модальный глагол выражает вероятность?",
-                    options: ["must", "should", "can", "may"],
-                    correct: 3
-                }
-            ]
-        },
-        vocabulary: {
-            title: "Викторина по лексике",
-            questions: [
-                {
-                    question: "Как переводится слово 'siblings'?",
-                    options: ["родители", "братья и сестры", "друзья", "родственники"],
-                    correct: 1
-                },
-                {
-                    question: "Что означает фразовый глагол 'get up'?",
-                    options: ["ложиться спать", "вставать", "надевать", "искать"],
-                    correct: 1
-                },
-                {
-                    question: "Как переводится слово 'homework'?",
-                    options: ["школа", "класс", "урок", "домашнее задание"],
-                    correct: 3
-                },
-                {
-                    question: "Что означает фразовый глагол 'look for'?",
-                    options: ["смотреть на", "искать", "выглядеть", "заботиться"],
-                    correct: 1
-                },
-                {
-                    question: "Как переводится слово 'acquaintance'?",
-                    options: ["друг", "знакомый", "коллега", "родственник"],
-                    correct: 1
-                },
-                {
-                    question: "Что означает фразовый глагол 'give up'?",
-                    options: ["давать", "поднимать", "сдаваться", "получать"],
-                    correct: 2
-                },
-                {
-                    question: "Как переводится слово 'leisure time'?",
-                    options: ["рабочее время", "свободное время", "учебное время", "личное время"],
-                    correct: 1
-                },
-                {
-                    question: "Что означает фразовый глагол 'turn on'?",
-                    options: ["выключать", "включать", "переворачивать", "возвращать"],
-                    correct: 1
-                },
-                {
-                    question: "Как переводится выражение 'be keen on'?",
-                    options: ["любить", "ненавидеть", "увлекаться", "интересоваться"],
-                    correct: 2
-                },
-                {
-                    question: "Что означает фразовый глагол 'put on'?",
-                    options: ["ставить", "класть", "надевать", "снимать"],
-                    correct: 2
-                },
-                {
-                    question: "Как переводится слово 'degree' в контексте образования?",
-                    options: ["степень", "диплом", "класс", "предмет"],
-                    correct: 0
-                },
-                {
-                    question: "Что означает фразовый глагол 'take up a hobby'?",
-                    options: ["бросить хобби", "заняться хобби", "обсуждать хобби", "развивать хобби"],
-                    correct: 1
-                }
-            ]
-        },
-        writing: {
-            title: "Викторина по письму",
-            questions: [
-                {
-                    question: "Где в личном письме указывается адрес и дата?",
-                    options: ["В левом верхнем углу", "В правом верхнем углу", "В конце письма", "После обращения"],
-                    correct: 1
-                },
-                {
-                    question: "Сколько вопросов нужно задать другу в личном письме на ОГЭ?",
-                    options: ["1", "2", "3", "4"],
-                    correct: 2
-                },
-                {
-                    question: "Как начинается обращение в личном письме?",
-                    options: ["Hello", "Dear", "Hi", "My dear"],
-                    correct: 1
-                },
-                {
-                    question: "Какая фраза подходит для начала письма?",
-                    options: ["That's all for now", "Thanks for your letter", "Hope to hear from you soon", "Best wishes"],
-                    correct: 1
-                },
-                {
-                    question: "Как заканчивается личное письмо?",
-                    options: ["Your friend", "Best wishes", "Goodbye", "See you"],
-                    correct: 1
-                },
-                {
-                    question: "Какой раздел письма следует после обращения?",
-                    options: ["Ответы на вопросы друга", "Благодарность за письмо", "Задать вопросы другу", "Прощание"],
-                    correct: 1
-                },
-                {
-                    question: "Сколько баллов можно получить за лексико-грамматическое оформление письма?",
-                    options: ["1", "2", "3", "4"],
-                    correct: 1
-                },
-                {
-                    question: "Какая фраза подходит для конца письма?",
-                    options: ["Write soon!", "You asked me about...", "How are you?", "As for me..."],
-                    correct: 0
-                },
-                {
-                    question: "Какой критерий оценивает правильность выполнения коммуникативной задачи?",
-                    options: ["Организация текста", "Лексико-грамматическое оформление", "Орфография и пунктуация", "Решение коммуникативной задачи"],
-                    correct: 3
-                },
-                {
-                    question: "Сколько всего баллов можно получить за письмо на ОГЭ?",
-                    options: ["6", "8", "10", "12"],
-                    correct: 1
-                },
-                {
-                    question: "Какая фраза используется для перехода к ответам на вопросы?",
-                    options: ["Well, that's all for now", "You asked me about...", "Hope to hear from you soon", "Best wishes"],
-                    correct: 1
-                },
-                {
-                    question: "Что следует после подписи в письме?",
-                    options: ["Дата", "Адрес", "Ничего", "Постскриптум"],
-                    correct: 2
-                }
-            ]
+    // Для формы регистрации
+    const toggleSignupPassword = document.getElementById('toggleSignupPassword');
+    if (toggleSignupPassword) {
+        toggleSignupPassword.addEventListener('click', function() {
+            const passwordInput = document.getElementById('signupPassword');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    }
+    
+    // Для подтверждения пароля
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    if (toggleConfirmPassword) {
+        toggleConfirmPassword.addEventListener('click', function() {
+            const passwordInput = document.getElementById('signupConfirmPassword');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    }
+}
+
+function getAuthErrorMessage(error) {
+    switch (error.code) {
+        case 'auth/email-already-in-use':
+            return 'Этот email уже используется';
+        case 'auth/invalid-email':
+            return 'Неверный формат email';
+        case 'auth/weak-password':
+            return 'Пароль слишком слабый';
+        case 'auth/user-not-found':
+            return 'Пользователь не найден';
+        case 'auth/wrong-password':
+            return 'Неверный пароль';
+        case 'auth/network-request-failed':
+            return 'Ошибка сети. Проверьте подключение к интернету';
+        default:
+            return 'Произошла ошибка. Пожалуйста, попробуйте снова';
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Создать элемент уведомления
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="notification-close">&times;</button>
+    `;
+    
+    // Добавить стили
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#4cc9f0' : '#f72585'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-width: 300px;
+        max-width: 400px;
+        z-index: 3000;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    // Добавить в body
+    document.body.appendChild(notification);
+    
+    // Кнопка закрытия
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    });
+    
+    // Автоматическое закрытие
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
         }
-    };
+    }, 5000);
     
-    // Переменные для управления викториной
-    let currentQuiz = null;
-    let currentQuestions = [];
-    let currentQuestionIndex = 0;
-    let userAnswers = [];
-    let quizStarted = false;
-    
-    // Элементы модального окна
-    const quizModal = document.getElementById('quizModal');
-    const quizTitle = document.getElementById('quizTitle');
-    const quizContainer = document.getElementById('quizContainer');
-    const currentQuestionEl = document.getElementById('currentQuestion');
-    const totalQuestionsEl = document.getElementById('totalQuestions');
-    const prevQuestionBtn = document.getElementById('prevQuestion');
-    const nextQuestionBtn = document.getElementById('nextQuestion');
-    const submitQuizBtn = document.getElementById('submitQuiz');
-    const closeModalBtn = document.querySelector('.close-modal');
-    
-    // Кнопки начала викторины
-    const startQuizButtons = document.querySelectorAll('.start-quiz');
-    
-    // Открытие викторины
-    startQuizButtons.forEach(button => {
+    // Анимации
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 15px;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Тесты (упрощенная версия)
+function setupQuizzes() {
+    // Обработчики для кнопок тестов
+    document.querySelectorAll('.start-quiz').forEach(button => {
         button.addEventListener('click', function() {
-            const quizType = this.getAttribute('data-tab');
+            const quizType = this.getAttribute('data-quiz');
             startQuiz(quizType);
         });
     });
     
-    // Закрытие модального окна
-    closeModalBtn.addEventListener('click', closeModal);
-    
-    // Закрытие модального окна при клике вне его
-    window.addEventListener('click', function(e) {
-        if (e.target === quizModal) {
-            closeModal();
-        }
+    // Обработчики для тем
+    document.querySelectorAll('.start-topic').forEach(button => {
+        button.addEventListener('click', function() {
+            const topic = this.getAttribute('data-topic');
+            startTopic(topic);
+        });
     });
-    
-    // Навигация по вопросам викторины
-    prevQuestionBtn.addEventListener('click', showPreviousQuestion);
-    nextQuestionBtn.addEventListener('click', showNextQuestion);
-    submitQuizBtn.addEventListener('click', submitQuiz);
-    
-    // Функция начала викторины
-    function startQuiz(quizType) {
-        currentQuiz = quizType;
-        currentQuestions = [...quizData[quizType].questions];
-        
-        // Выбираем 10 случайных вопросов
-        shuffleArray(currentQuestions);
-        currentQuestions = currentQuestions.slice(0, 10);
-        
-        // Сброс переменных
-        currentQuestionIndex = 0;
-        userAnswers = new Array(currentQuestions.length).fill(null);
-        quizStarted = true;
-        
-        // Установка заголовка
-        quizTitle.textContent = quizData[quizType].title;
-        
-        // Обновление счетчика вопросов
-        currentQuestionEl.textContent = currentQuestionIndex + 1;
-        totalQuestionsEl.textContent = currentQuestions.length;
-        
-        // Сброс кнопок навигации
-        prevQuestionBtn.disabled = true;
-        nextQuestionBtn.disabled = false;
-        nextQuestionBtn.style.display = 'block';
-        submitQuizBtn.style.display = 'none';
-        
-        // Показ первого вопроса
-        displayQuestion();
-        
-        // Открытие модального окна
-        quizModal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
+}
+
+function startQuiz(quizType) {
+    // Проверка авторизации
+    if (!auth.currentUser) {
+        showNotification('Пожалуйста, войдите в систему для прохождения тестов', 'error');
+        openModal('loginModal');
+        return;
     }
     
-    // Функция отображения вопроса
-    function displayQuestion() {
-        const question = currentQuestions[currentQuestionIndex];
+    // Здесь будет логика тестов
+    showNotification('Функция тестов в разработке', 'info');
+}
+
+function startTopic(topic) {
+    // Здесь будет логика изучения тем
+    showNotification(`Начато изучение темы: ${topic}`, 'info');
+}
+
+// Сохранение результатов теста
+async function saveQuizResult(userId, quizType, score, totalQuestions) {
+    try {
+        const result = {
+            quizType: quizType,
+            score: score,
+            totalQuestions: totalQuestions,
+            date: firebase.firestore.FieldValue.serverTimestamp()
+        };
         
-        // Обновление счетчика
-        currentQuestionEl.textContent = currentQuestionIndex + 1;
+        // Сохранить результат
+        await db.collection('users').doc(userId).collection('quizResults').add(result);
         
-        // Создание HTML для вопроса
-        let optionsHTML = '';
-        question.options.forEach((option, index) => {
-            const isSelected = userAnswers[currentQuestionIndex] === index;
-            optionsHTML += `
-                <button class="quiz-option ${isSelected ? 'selected' : ''}" data-index="${index}">
-                    ${option}
-                </button>
-            `;
-        });
+        // Обновить статистику
+        const userRef = db.collection('users').doc(userId);
+        const userDoc = await userRef.get();
+        const userData = userDoc.data();
         
-        quizContainer.innerHTML = `
-            <div class="quiz-question">
-                <h4>Вопрос ${currentQuestionIndex + 1}: ${question.question}</h4>
-                <div class="quiz-options">
-                    ${optionsHTML}
-                </div>
-            </div>
-        `;
+        const updates = {
+            'stats.completedTests': (userData.stats.completedTests || 0) + 1,
+            'stats.correctAnswers': (userData.stats.correctAnswers || 0) + score,
+            'stats.totalAnswers': (userData.stats.totalAnswers || 0) + totalQuestions
+        };
         
-        // Добавление обработчиков для вариантов ответов
-        const optionButtons = document.querySelectorAll('.quiz-option');
-        optionButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const selectedIndex = parseInt(this.getAttribute('data-index'));
-                
-                // Снятие выделения со всех вариантов
-                optionButtons.forEach(btn => btn.classList.remove('selected'));
-                
-                // Выделение выбранного варианта
-                this.classList.add('selected');
-                
-                // Сохранение ответа пользователя
-                userAnswers[currentQuestionIndex] = selectedIndex;
-                
-                // Активация кнопки "Следующий"
-                nextQuestionBtn.disabled = false;
-            });
-        });
+        await userRef.update(updates);
         
-        // Обновление состояния кнопок навигации
-        prevQuestionBtn.disabled = currentQuestionIndex === 0;
-        
-        // Показать кнопку "Завершить" на последнем вопросе
-        if (currentQuestionIndex === currentQuestions.length - 1) {
-            nextQuestionBtn.style.display = 'none';
-            submitQuizBtn.style.display = 'block';
-        } else {
-            nextQuestionBtn.style.display = 'block';
-            submitQuizBtn.style.display = 'none';
-        }
+    } catch (error) {
+        console.error('Ошибка сохранения результата:', error);
     }
-    
-    // Функция перехода к предыдущему вопросу
-    function showPreviousQuestion() {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            displayQuestion();
-        }
-    }
-    
-    // Функция перехода к следующему вопросу
-    function showNextQuestion() {
-        if (currentQuestionIndex < currentQuestions.length - 1) {
-            currentQuestionIndex++;
-            displayQuestion();
-        }
-    }
-    
-    // Функция завершения викторины
-    function submitQuiz() {
-        // Проверка, все ли вопросы отвечены
-        const unanswered = userAnswers.filter(answer => answer === null).length;
-        
-        if (unanswered > 0) {
-            if (!confirm(`Вы ответили не на все вопросы. ${unanswered} вопрос(ов) осталось без ответа. Все равно завершить викторину?`)) {
-                return;
-            }
-        }
-        
-        // Расчет результатов
-        let correctCount = 0;
-        const results = [];
-        
-        currentQuestions.forEach((question, index) => {
-            const userAnswer = userAnswers[index];
-            const isCorrect = userAnswer === question.correct;
-            
-            if (isCorrect) correctCount++;
-            
-            results.push({
-                question: question.question,
-                userAnswer: userAnswer !== null ? question.options[userAnswer] : "Нет ответа",
-                correctAnswer: question.options[question.correct],
-                isCorrect: isCorrect
-            });
-        });
-        
-        const score = Math.round((correctCount / currentQuestions.length) * 100);
-        
-        // Отображение результатов
-        let resultsHTML = `
-            <div class="quiz-results">
-                <h3>Результаты викторины</h3>
-                <div class="result-score">${score}%</div>
-                <div class="result-message">Вы ответили правильно на ${correctCount} из ${currentQuestions.length} вопросов</div>
-                
-                <div class="result-details">
-                    <h4>Детализация ответов:</h4>
-        `;
-        
-        results.forEach((result, index) => {
-            resultsHTML += `
-                <div class="result-item">
-                    <p><strong>Вопрос ${index + 1}:</strong> ${result.question}</p>
-                    <p class="${result.isCorrect ? 'result-correct' : 'result-incorrect'}">
-                        <strong>Ваш ответ:</strong> ${result.userAnswer}
-                    </p>
-                    ${!result.isCorrect ? `<p class="result-correct"><strong>Правильный ответ:</strong> ${result.correctAnswer}</p>` : ''}
-                </div>
-            `;
-        });
-        
-        resultsHTML += `
-                </div>
-                <button id="restartQuiz" style="margin-top: 20px; padding: 12px 30px; background-color: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer;">
-                    Пройти викторину еще раз
-                </button>
-                <button id="closeResults" style="margin-top: 10px; padding: 12px 30px; background-color: #f8f9fa; color: #333; border: none; border-radius: 8px; cursor: pointer;">
-                    Закрыть
-                </button>
-            </div>
-        `;
-        
-        quizContainer.innerHTML = resultsHTML;
-        
-        // Скрытие элементов навигации
-        document.querySelector('.quiz-info').style.display = 'none';
-        document.querySelector('.quiz-controls').style.display = 'none';
-        
-        // Обработчики для кнопок результатов
-        document.getElementById('restartQuiz').addEventListener('click', function() {
-            startQuiz(currentQuiz);
-        });
-        
-        document.getElementById('closeResults').addEventListener('click', closeModal);
-    }
-    
-    // Функция закрытия модального окна
-    function closeModal() {
-        quizModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        
-        // Сброс состояния викторины
-        quizStarted = false;
-        
-        // Восстановление элементов управления
-        document.querySelector('.quiz-info').style.display = 'flex';
-        document.querySelector('.quiz-controls').style.display = 'flex';
-    }
-    
-    // Вспомогательная функция для перемешивания массива
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-    
-    // Открытие первой вкладки по умолчанию
-    document.querySelector('.nav-link.active').click();
-});
+}
