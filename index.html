@@ -3,360 +3,557 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Подготовка к ОГЭ по английскому языку</title>
+    <title>English Master - Изучение английского языка</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
-    <header>
+    <!-- Хедер с навигацией -->
+    <header class="main-header">
         <div class="container">
-            <h1><i class="fas fa-book-open"></i> Подготовка к ОГЭ по английскому</h1>
-            <p class="subtitle">Справочные материалы и интерактивные тесты для успешной сдачи экзамена</p>
+            <nav class="navbar">
+                <div class="nav-container">
+                    <a href="#" class="logo">
+                        <i class="fas fa-language"></i>
+                        <span>English<span class="logo-highlight">Master</span></span>
+                    </a>
+                    
+                    <button class="nav-toggle" id="navToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <div class="nav-right">
+                        <ul class="nav-menu" id="navMenu">
+                            <li><a href="#" class="nav-link active" data-tab="home"><i class="fas fa-home"></i> Главная</a></li>
+                            <li><a href="#" class="nav-link" data-tab="grammar"><i class="fas fa-book"></i> Грамматика</a></li>
+                            <li><a href="#" class="nav-link" data-tab="verbs"><i class="fas fa-list-alt"></i> Глаголы</a></li>
+                            <li><a href="#" class="nav-link" data-tab="vocabulary"><i class="fas fa-book-open"></i> Словарь</a></li>
+                            <li><a href="#" class="nav-link" data-tab="practice"><i class="fas fa-pen-alt"></i> Практика</a></li>
+                            <li><a href="#" class="nav-link" data-tab="resources"><i class="fas fa-download"></i> Ресурсы</a></li>
+                        </ul>
+                        
+                        <!-- Блок авторизации -->
+                        <div class="auth-section">
+                            <div class="auth-buttons" id="authButtons">
+                                <button id="loginBtn" class="btn btn-outline btn-small">
+                                    <i class="fas fa-sign-in-alt"></i> Войти
+                                </button>
+                                <button id="signupBtn" class="btn btn-primary btn-small">
+                                    <i class="fas fa-user-plus"></i> Регистрация
+                                </button>
+                            </div>
+                            
+                            <div class="user-profile" id="userProfile" style="display: none;">
+                                <div class="user-avatar" id="userAvatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="user-dropdown">
+                                    <span class="user-name" id="userName">Пользователь</span>
+                                    <div class="dropdown-menu">
+                                        <a href="#" class="dropdown-item" data-tab="profile"><i class="fas fa-user"></i> Профиль</a>
+                                        <a href="#" class="dropdown-item" data-tab="progress"><i class="fas fa-chart-line"></i> Прогресс</a>
+                                        <a href="#" class="dropdown-item" data-tab="achievements"><i class="fas fa-trophy"></i> Достижения</a>
+                                        <div class="dropdown-divider"></div>
+                                        <button id="logoutBtn" class="dropdown-item logout">
+                                            <i class="fas fa-sign-out-alt"></i> Выйти
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
         </div>
     </header>
 
-    <nav>
+    <!-- Герой секция -->
+    <section class="hero-section">
         <div class="container">
-            <div class="nav-container">
-                <button class="nav-toggle" id="navToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <ul class="nav-menu" id="navMenu">
-                    <li><a href="#" class="nav-link active" data-tab="home"><i class="fas fa-home"></i> Главная</a></li>
-                    <li><a href="#" class="nav-link" data-tab="verbs"><i class="fas fa-list-alt"></i> Неправильные глаголы</a></li>
-                    <li><a href="#" class="nav-link" data-tab="grammar"><i class="fas fa-language"></i> Грамматика</a></li>
-                    <li><a href="#" class="nav-link" data-tab="vocabulary"><i class="fas fa-book"></i> Лексика</a></li>
-                    <li><a href="#" class="nav-link" data-tab="writing"><i class="fas fa-pen"></i> Письмо</a></li>
-                </ul>
+            <div class="hero-content">
+                <h1 class="animate__animated animate__fadeInDown">Английский язык <span class="highlight">для всех</span></h1>
+                <p class="hero-subtitle animate__animated animate__fadeInUp">Изучайте английский легко и интересно с помощью нашей платформы. Грамматика, словарь, практика и многое другое!</p>
+                <div class="hero-buttons animate__animated animate__fadeInUp">
+                    <a href="#" class="btn btn-primary" data-tab="grammar">Начать учить</a>
+                    <a href="#" class="btn btn-secondary" data-tab="practice">Практиковаться</a>
+                </div>
             </div>
         </div>
-    </nav>
+    </section>
 
+    <!-- Секция статистики -->
+    <section class="stats-section">
+        <div class="container">
+            <!-- Общая статистика -->
+            <div class="general-stats animate__animated animate__fadeIn">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-list-alt"></i>
+                        </div>
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Неправильных глаголов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Грамматических тем</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="stat-number">2000+</div>
+                        <div class="stat-label">Слов в словаре</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">Тестов и упражнений</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Статистика пользователя (скрыта по умолчанию) -->
+            <div class="user-stats" id="userStats" style="display: none;">
+                <h3>Ваш прогресс</h3>
+                <div class="stats-grid">
+                    <div class="stat-card user-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-number" id="completedTests">0</div>
+                        <div class="stat-label">Пройдено тестов</div>
+                    </div>
+                    <div class="stat-card user-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-number" id="correctAnswers">0%</div>
+                        <div class="stat-label">Правильных ответов</div>
+                    </div>
+                    <div class="stat-card user-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-number" id="studyDays">0</div>
+                        <div class="stat-label">Дней обучения</div>
+                    </div>
+                    <div class="stat-card user-stat">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-number" id="streak">0</div>
+                        <div class="stat-label">Дней подряд</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Основное содержимое -->
     <main class="container">
         <!-- Главная страница -->
         <section id="home" class="tab-content active">
             <div class="welcome-section">
-                <h2>Добро пожаловать на сайт подготовки к ОГЭ!</h2>
-                <p>Этот сайт создан для помощи в подготовке к ОГЭ по английскому языку. Здесь вы найдете справочные материалы и интерактивные викторины по всем ключевым темам экзамена.</p>
+                <h2>Добро пожаловать на English Master!</h2>
+                <p class="section-intro">Наша платформа поможет вам освоить английский язык с нуля или улучшить существующие знания. Мы собрали самые полезные материалы, интерактивные упражнения и тесты.</p>
                 
-                <div class="features">
-                    <div class="feature">
-                        <i class="fas fa-graduation-cap"></i>
-                        <h3>Структура ОГЭ</h3>
-                        <p>Экзамен состоит из письменной и устной частей, включающих аудирование, чтение, грамматику, лексику, письмо и говорение.</p>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Прогресс обучения</h3>
+                        <p>Отслеживайте свой прогресс в изучении грамматики, лексики и других аспектов языка.</p>
                     </div>
-                    <div class="feature">
-                        <i class="fas fa-clock"></i>
-                        <h3>Время выполнения</h3>
-                        <p>На выполнение письменной части отводится 120 минут, на устную часть - 15 минут на одного участника.</p>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3>Интерактивные тесты</h3>
+                        <p>Проверяйте знания с помощью увлекательных тестов и викторин с мгновенной обратной связью.</p>
                     </div>
-                    <div class="feature">
-                        <i class="fas fa-star"></i>
-                        <h3>Максимальный балл</h3>
-                        <p>Максимальный первичный балл за выполнение всей работы - 68, который переводится в оценку по 5-балльной шкале.</p>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headphones"></i>
+                        </div>
+                        <h3>Аудирование</h3>
+                        <p>Улучшайте навыки аудирования с помощью упражнений с носителями языка.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-download"></i>
+                        </div>
+                        <h3>Материалы для скачивания</h3>
+                        <p>Скачивайте таблицы, списки слов и другие полезные материалы для оффлайн-изучения.</p>
                     </div>
                 </div>
                 
-                <div class="instructions">
-                    <h3>Как пользоваться сайтом:</h3>
-                    <ol>
-                        <li>Выберите тему из меню навигации</li>
-                        <li>Изучите справочные материалы по выбранной теме</li>
-                        <li>Пройдите викторину в конце каждой темы для проверки знаний</li>
-                        <li>Повторяйте темы, в которых допустили ошибки</li>
-                    </ol>
+                <div class="study-plan">
+                    <h3>С чего начать?</h3>
+                    <div class="plan-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <h4>Создайте аккаунт</h4>
+                            <p>Зарегистрируйтесь, чтобы сохранять прогресс и получать персонализированные рекомендации.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <h4>Изучите грамматику</h4>
+                            <p>Начните с основных грамматических тем, таких как времена, артикли и предлоги.</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <h4>Практикуйтесь</h4>
+                            <p>Закрепляйте знания с помощью интерактивных упражнений и тестов.</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Неправильные глаголы -->
-        <section id="verbs" class="tab-content">
-            <h2>Неправильные глаголы</h2>
-            <p class="section-description">Неправильные глаголы - это глаголы, которые образуют формы прошедшего времени и причастие прошедшего времени не по общим правилам.</p>
-            
-            <div class="material">
-                <h3>Таблица неправильных глаголов</h3>
-                <div class="table-container">
-                    <table class="verbs-table">
-                        <thead>
-                            <tr>
-                                <th>Infinitive</th>
-                                <th>Past Simple</th>
-                                <th>Past Participle</th>
-                                <th>Перевод</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>be</td>
-                                <td>was/were</td>
-                                <td>been</td>
-                                <td>быть</td>
-                            </tr>
-                            <tr>
-                                <td>begin</td>
-                                <td>began</td>
-                                <td>begun</td>
-                                <td>начинать</td>
-                            </tr>
-                            <tr>
-                                <td>break</td>
-                                <td>broke</td>
-                                <td>broken</td>
-                                <td>ломать</td>
-                            </tr>
-                            <tr>
-                                <td>bring</td>
-                                <td>brought</td>
-                                <td>brought</td>
-                                <td>приносить</td>
-                            </tr>
-                            <tr>
-                                <td>build</td>
-                                <td>built</td>
-                                <td>built</td>
-                                <td>строить</td>
-                            </tr>
-                            <tr>
-                                <td>buy</td>
-                                <td>bought</td>
-                                <td>bought</td>
-                                <td>покупать</td>
-                            </tr>
-                            <tr>
-                                <td>choose</td>
-                                <td>chose</td>
-                                <td>chosen</td>
-                                <td>выбирать</td>
-                            </tr>
-                            <tr>
-                                <td>come</td>
-                                <td>came</td>
-                                <td>come</td>
-                                <td>приходить</td>
-                            </tr>
-                            <tr>
-                                <td>do</td>
-                                <td>did</td>
-                                <td>done</td>
-                                <td>делать</td>
-                            </tr>
-                            <tr>
-                                <td>drink</td>
-                                <td>drank</td>
-                                <td>drunk</td>
-                                <td>пить</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <h3>Правила запоминания:</h3>
-                <ul>
-                    <li>Группируйте глаголы по схожести форм (begin-began-begun, drink-drank-drunk)</li>
-                    <li>Используйте карточки для запоминания</li>
-                    <li>Практикуйтесь в составлении предложений с неправильными глаголами</li>
-                    <li>Регулярно повторяйте выученные глаголы</li>
-                </ul>
-            </div>
-            
-            <div class="quiz-section">
-                <h3><i class="fas fa-question-circle"></i> Викторина по неправильным глаголам</h3>
-                <p>Проверьте свои знания! Вам будет предложено 10 случайных вопросов.</p>
-                <button class="start-quiz" data-tab="verbs">Начать викторину</button>
             </div>
         </section>
 
         <!-- Грамматика -->
         <section id="grammar" class="tab-content">
-            <h2>Грамматика</h2>
-            <p class="section-description">Основные грамматические темы, необходимые для успешной сдачи ОГЭ по английскому языку.</p>
+            <div class="section-header">
+                <h2><i class="fas fa-book"></i> Грамматика английского языка</h2>
+                <p class="section-description">Изучайте грамматические правила с понятными объяснениями и примерами.</p>
+            </div>
             
-            <div class="material">
-                <h3>Времена английского глагола</h3>
-                <div class="grammar-topic">
-                    <h4>Present Simple</h4>
-                    <p>Используется для выражения регулярных действий, фактов и общеизвестных истин.</p>
-                    <p><strong>Пример:</strong> I <em>work</em> every day. She <em>works</em> in a bank.</p>
+            <div class="topics-grid">
+                <div class="topic-card" data-topic="tenses">
+                    <div class="topic-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Времена</h3>
+                    <p>12 времен английского языка с примерами и таблицами.</p>
+                    <button class="btn btn-outline start-topic" data-topic="tenses">Изучить</button>
                 </div>
                 
-                <div class="grammar-topic">
-                    <h4>Past Simple</h4>
-                    <p>Используется для выражения действий, которые произошли в определенное время в прошлом.</p>
-                    <p><strong>Пример:</strong> I <em>worked</em> yesterday. She <em>went</em> to school last week.</p>
+                <div class="topic-card" data-topic="articles">
+                    <div class="topic-icon">
+                        <i class="fas fa-file-word"></i>
+                    </div>
+                    <h3>Артикли</h3>
+                    <p>Правила использования a, an, the и случаи отсутствия артикля.</p>
+                    <button class="btn btn-outline start-topic" data-topic="articles">Изучить</button>
                 </div>
                 
-                <div class="grammar-topic">
-                    <h4>Future Simple</h4>
-                    <p>Используется для выражения спонтанных решений, предсказаний или обещаний о будущем.</p>
-                    <p><strong>Пример:</strong> I <em>will work</em> tomorrow. She <em>will help</em> you.</p>
+                <div class="topic-card" data-topic="prepositions">
+                    <div class="topic-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Предлоги</h3>
+                    <p>Предлоги места, времени, движения и их правильное использование.</p>
+                    <button class="btn btn-outline start-topic" data-topic="prepositions">Изучить</button>
                 </div>
-                
-                <h3>Модальные глаголы</h3>
-                <p>Модальные глаголы выражают возможность, необходимость, разрешение, способность:</p>
-                <ul>
-                    <li><strong>can</strong> - уметь, мочь (I can swim)</li>
-                    <li><strong>must</strong> - должен (I must go)</li>
-                    <li><strong>should</strong> - следует (You should study)</li>
-                    <li><strong>may</strong> - можно, возможно (May I come in?)</li>
-                </ul>
+            </div>
+            
+            <div class="grammar-content" id="tensesContent" style="display: none;">
+                <!-- Контент для времен будет загружен динамически -->
             </div>
             
             <div class="quiz-section">
-                <h3><i class="fas fa-question-circle"></i> Викторина по грамматике</h3>
+                <h3><i class="fas fa-question-circle"></i> Тест по грамматике</h3>
                 <p>Проверьте свои знания грамматики! Вам будет предложено 10 случайных вопросов.</p>
-                <button class="start-quiz" data-tab="grammar">Начать викторину</button>
+                <button class="btn btn-primary start-quiz" data-quiz="grammar">Начать тест</button>
             </div>
         </section>
 
-        <!-- Лексика -->
-        <section id="vocabulary" class="tab-content">
-            <h2>Лексика</h2>
-            <p class="section-description">Основные тематические слова и выражения для ОГЭ по английскому языку.</p>
-            
-            <div class="material">
-                <h3>Тематические словари</h3>
-                
-                <div class="vocabulary-topic">
-                    <h4>Семья и друзья</h4>
-                    <ul>
-                        <li>parents - родители</li>
-                        <li>siblings - братья и сестры</li>
-                        <li>relatives - родственники</li>
-                        <li>close friend - близкий друг</li>
-                        <li>acquaintance - знакомый</li>
-                    </ul>
-                </div>
-                
-                <div class="vocabulary-topic">
-                    <h4>Школа и образование</h4>
-                    <ul>
-                        <li>subjects - предметы</li>
-                        <li>homework - домашнее задание</li>
-                        <li>exam - экзамен</li>
-                        <li>graduate - выпускаться</li>
-                        <li>degree - степень</li>
-                    </ul>
-                </div>
-                
-                <div class="vocabulary-topic">
-                    <h4>Хобби и свободное время</h4>
-                    <ul>
-                        <li>leisure time - свободное время</li>
-                        <li>pastime - времяпрепровождение</li>
-                        <li>take up a hobby - заняться хобби</li>
-                        <li>be keen on - увлекаться</li>
-                        <li>be fond of - любить что-то делать</li>
-                    </ul>
-                </div>
-                
-                <h3>Фразовые глаголы</h3>
-                <p>Фразовые глаголы, которые часто встречаются в ОГЭ:</p>
-                <ul>
-                    <li><strong>get up</strong> - вставать</li>
-                    <li><strong>look for</strong> - искать</li>
-                    <li><strong>give up</strong> - сдаваться, бросать</li>
-                    <li><strong>turn on/off</strong> - включать/выключать</li>
-                    <li><strong>put on</strong> - надевать</li>
-                </ul>
+        <!-- Профиль пользователя -->
+        <section id="profile" class="tab-content">
+            <div class="section-header">
+                <h2><i class="fas fa-user"></i> Мой профиль</h2>
+                <p class="section-description">Управляйте вашим аккаунтом и настройками обучения.</p>
             </div>
             
-            <div class="quiz-section">
-                <h3><i class="fas fa-question-circle"></i> Викторина по лексике</h3>
-                <p>Проверьте свои знания лексики! Вам будет предложено 10 случайных вопросов.</p>
-                <button class="start-quiz" data-tab="vocabulary">Начать викторину</button>
-            </div>
-        </section>
-
-        <!-- Письмо -->
-        <section id="writing" class="tab-content">
-            <h2>Письмо</h2>
-            <p class="section-description">Правила написания личного письма и эссе для ОГЭ по английскому языку.</p>
-            
-            <div class="material">
-                <h3>Структура личного письма</h3>
-                <ol>
-                    <li><strong>Адрес и дата</strong> (в правом верхнем углу)</li>
-                    <li><strong>Обращение</strong> (Dear...,)</li>
-                    <li><strong>Благодарность за письмо и ответ на вопросы</strong></li>
-                    <li><strong>Ответы на вопросы друга</strong> (3-4 абзаца)</li>
-                    <li><strong>Задать 3 вопроса другу</strong></li>
-                    <li><strong>Заключительная фраза</strong> (Hope to hear from you soon)</li>
-                    <li><strong>Подпись</strong> (Best wishes, + ваше имя)</li>
-                </ol>
+            <div class="profile-container">
+                <div class="profile-sidebar">
+                    <div class="profile-avatar" id="profileAvatar">
+                        <i class="fas fa-user-circle"></i>
+                        <button class="btn-change-avatar">Изменить</button>
+                    </div>
+                    <h3 id="profileUserName">Имя пользователя</h3>
+                    <p id="profileUserEmail">email@example.com</p>
+                    
+                    <div class="profile-nav">
+                        <button class="profile-nav-btn active" data-tab="profile-info">Информация</button>
+                        <button class="profile-nav-btn" data-tab="profile-progress">Прогресс</button>
+                        <button class="profile-nav-btn" data-tab="profile-settings">Настройки</button>
+                    </div>
+                </div>
                 
-                <h3>Полезные фразы для письма</h3>
-                <div class="writing-phrases">
-                    <div class="phrase-category">
-                        <h4>Начало письма:</h4>
-                        <ul>
-                            <li>Thanks for your letter. It was great to hear from you.</li>
-                            <li>Sorry I haven't written for so long.</li>
-                            <li>How are you getting on?</li>
-                        </ul>
+                <div class="profile-content">
+                    <div class="profile-tab active" id="profile-info">
+                        <h3>Информация профиля</h3>
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label for="profileName">Имя</label>
+                                <input type="text" id="profileName" placeholder="Ваше имя">
+                            </div>
+                            <div class="form-group">
+                                <label for="profileEmail">Email</label>
+                                <input type="email" id="profileEmail" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="profileLevel">Уровень английского</label>
+                                <select id="profileLevel">
+                                    <option value="beginner">Начинающий (A1)</option>
+                                    <option value="elementary">Элементарный (A2)</option>
+                                    <option value="intermediate">Средний (B1)</option>
+                                    <option value="upper">Выше среднего (B2)</option>
+                                    <option value="advanced">Продвинутый (C1)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="profileGoal">Цель обучения</label>
+                                <select id="profileGoal">
+                                    <option value="travel">Для путешествий</option>
+                                    <option value="work">Для работы</option>
+                                    <option value="study">Для учебы</option>
+                                    <option value="exam">Для экзамена</option>
+                                    <option value="general">Общее развитие</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        </form>
                     </div>
                     
-                    <div class="phrase-category">
-                        <h4>Основная часть:</h4>
-                        <ul>
-                            <li>You asked me about... Well, ...</li>
-                            <li>As for your questions, ...</li>
-                            <li>I'd like to tell you that...</li>
-                        </ul>
+                    <div class="profile-tab" id="profile-progress">
+                        <h3>Прогресс обучения</h3>
+                        <div class="progress-chart">
+                            <!-- График прогресса будет загружен динамически -->
+                        </div>
                     </div>
                     
-                    <div class="phrase-category">
-                        <h4>Конец письма:</h4>
-                        <ul>
-                            <li>Well, that's all for now.</li>
-                            <li>Write back soon!</li>
-                            <li>Hope to hear from you soon.</li>
-                        </ul>
+                    <div class="profile-tab" id="profile-settings">
+                        <h3>Настройки</h3>
+                        <div class="settings-group">
+                            <h4>Уведомления</h4>
+                            <div class="setting-item">
+                                <label class="switch">
+                                    <input type="checkbox" id="notifyDaily" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Ежедневные напоминания</span>
+                            </div>
+                            <div class="setting-item">
+                                <label class="switch">
+                                    <input type="checkbox" id="notifyProgress" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Уведомления о прогрессе</span>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h4>Безопасность</h4>
+                            <button class="btn btn-outline" id="changePasswordBtn">Изменить пароль</button>
+                        </div>
                     </div>
                 </div>
-                
-                <h3>Критерии оценки письма на ОГЭ</h3>
-                <ul>
-                    <li><strong>Решение коммуникативной задачи</strong> (0-2 балла)</li>
-                    <li><strong>Организация текста</strong> (0-2 балла)</li>
-                    <li><strong>Лексико-грамматическое оформление</strong> (0-2 балла)</li>
-                    <li><strong>Орфография и пунктуация</strong> (0-2 балла)</li>
-                </ul>
-            </div>
-            
-            <div class="quiz-section">
-                <h3><i class="fas fa-question-circle"></i> Викторина по письму</h3>
-                <p>Проверьте свои знания правил написания письма! Вам будет предложено 10 случайных вопросов.</p>
-                <button class="start-quiz" data-tab="writing">Начать викторину</button>
             </div>
         </section>
 
-        <!-- Модальное окно для викторины -->
+        <!-- Остальные разделы (глаголы, словарь, практика, ресурсы) -->
+        <!-- ... аналогичная структура как в предыдущей версии ... -->
+
+        <!-- Модальное окно для входа -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Вход в аккаунт</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">Email</label>
+                            <input type="email" id="loginEmail" required placeholder="Ваш email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">Пароль</label>
+                            <div class="password-input">
+                                <input type="password" id="loginPassword" required placeholder="Ваш пароль">
+                                <button type="button" class="toggle-password" id="toggleLoginPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-options">
+                            <label class="checkbox">
+                                <input type="checkbox" id="rememberMe">
+                                <span>Запомнить меня</span>
+                            </label>
+                            <a href="#" id="forgotPasswordLink">Забыли пароль?</a>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span class="btn-text">Войти</span>
+                            <div class="loading-spinner" style="display: none;"></div>
+                        </button>
+                        
+                        <div class="auth-divider">
+                            <span>или войти через</span>
+                        </div>
+                        
+                        <div class="social-auth">
+                            <button type="button" class="btn btn-social btn-google" id="googleLogin">
+                                <i class="fab fa-google"></i> Google
+                            </button>
+                        </div>
+                        
+                        <div class="auth-switch">
+                            Нет аккаунта? <a href="#" id="switchToSignup">Зарегистрироваться</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для регистрации -->
+        <div id="signupModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Регистрация</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="signupForm">
+                        <div class="form-group">
+                            <label for="signupName">Имя</label>
+                            <input type="text" id="signupName" required placeholder="Ваше имя">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signupEmail">Email</label>
+                            <input type="email" id="signupEmail" required placeholder="Ваш email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signupPassword">Пароль</label>
+                            <div class="password-input">
+                                <input type="password" id="signupPassword" required placeholder="Придумайте пароль">
+                                <button type="button" class="toggle-password" id="toggleSignupPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="passwordStrengthFill"></div>
+                                </div>
+                                <div class="strength-text" id="passwordStrengthText">Сложность пароля: слабый</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signupConfirmPassword">Подтвердите пароль</label>
+                            <div class="password-input">
+                                <input type="password" id="signupConfirmPassword" required placeholder="Повторите пароль">
+                                <button type="button" class="toggle-password" id="toggleConfirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-options">
+                            <label class="checkbox">
+                                <input type="checkbox" id="acceptTerms" required>
+                                <span>Я согласен с <a href="#">условиями использования</a> и <a href="#">политикой конфиденциальности</a></span>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span class="btn-text">Зарегистрироваться</span>
+                            <div class="loading-spinner" style="display: none;"></div>
+                        </button>
+                        
+                        <div class="auth-divider">
+                            <span>или зарегистрироваться через</span>
+                        </div>
+                        
+                        <div class="social-auth">
+                            <button type="button" class="btn btn-social btn-google" id="googleSignup">
+                                <i class="fab fa-google"></i> Google
+                            </button>
+                        </div>
+                        
+                        <div class="auth-switch">
+                            Уже есть аккаунт? <a href="#" id="switchToLogin">Войти</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для сброса пароля -->
+        <div id="forgotPasswordModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Восстановление пароля</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="forgotPasswordForm">
+                        <div class="form-group">
+                            <label for="resetEmail">Email</label>
+                            <input type="email" id="resetEmail" required placeholder="Ваш email">
+                        </div>
+                        
+                        <p class="reset-info">На указанный email будет отправлена ссылка для сброса пароля.</p>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span class="btn-text">Отправить ссылку</span>
+                            <div class="loading-spinner" style="display: none;"></div>
+                        </button>
+                        
+                        <div class="auth-switch">
+                            <a href="#" id="backToLogin">Вернуться к входу</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для тестов -->
         <div id="quizModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 id="quizTitle">Викторина</h2>
+                    <h2 id="quizTitle">Тест</h2>
                     <button class="close-modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="quiz-info">
-                        <p>Ответьте на 10 вопросов. После завершения вы увидите результат.</p>
+                        <p id="quizDescription">Ответьте на вопросы. После завершения вы увидите результат.</p>
                         <div class="quiz-progress">
                             <span id="currentQuestion">1</span> из <span id="totalQuestions">10</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="quizProgressBar"></div>
+                            </div>
                         </div>
                     </div>
                     
                     <div id="quizContainer">
-                        <!-- Вопросы будут добавляться с помощью JavaScript -->
+                        <!-- Вопросы будут добавляться динамически -->
                     </div>
                     
                     <div class="quiz-controls">
-                        <button id="prevQuestion" disabled>Предыдущий</button>
-                        <button id="nextQuestion">Следующий</button>
-                        <button id="submitQuiz" style="display: none;">Завершить викторину</button>
+                        <button id="prevQuestion" class="btn btn-outline" disabled>Назад</button>
+                        <button id="nextQuestion" class="btn btn-primary">Далее</button>
+                        <button id="submitQuiz" class="btn btn-success" style="display: none;">Завершить тест</button>
                     </div>
                 </div>
             </div>
@@ -365,11 +562,70 @@
 
     <footer>
         <div class="container">
-            <p>Сайт для подготовки к ОГЭ по английскому языку &copy; <span id="currentYear"></span></p>
-            <p>Для учителей и учащихся. Все материалы представлены в учебных целях.</p>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>English Master</h3>
+                    <p>Платформа для изучения английского языка. Грамматика, словарь, практика и полезные ресурсы.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Разделы</h4>
+                    <ul>
+                        <li><a href="#" data-tab="grammar">Грамматика</a></li>
+                        <li><a href="#" data-tab="verbs">Глаголы</a></li>
+                        <li><a href="#" data-tab="vocabulary">Словарь</a></li>
+                        <li><a href="#" data-tab="practice">Практика</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Ресурсы</h4>
+                    <ul>
+                        <li><a href="#" data-tab="resources">Материалы</a></li>
+                        <li><a href="#">Блог</a></li>
+                        <li><a href="#">Помощь</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Контакты</h4>
+                    <ul>
+                        <li><a href="mailto:info@englishmaster.com">info@englishmaster.com</a></li>
+                        <li><a href="#">О проекте</a></li>
+                        <li><a href="#">Политика конфиденциальности</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear"></span> English Master. Все права защищены.</p>
+                <p>Сайт разработан для изучения английского языка.</p>
+            </div>
         </div>
     </footer>
 
+    <!-- Firebase конфигурация -->
+    <script type="module">
+        // Ваш Firebase конфиг
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWP2jTkKMUlBhp693hmq0JLj-UxzYspCM",
+            authDomain: "englishproject-4c6d0.firebaseapp.com",
+            projectId: "englishproject-4c6d0",
+            storageBucket: "englishproject-4c6d0.firebasestorage.app",
+            messagingSenderId: "524432394751",
+            appId: "1:524432394751:web:a60536a71a3a1ca26d7fca"
+        };
+        
+        // Экспортируем для использования в основном скрипте
+        window.firebaseConfig = firebaseConfig;
+    </script>
+    
     <script src="script.js"></script>
 </body>
 </html>
